@@ -9,11 +9,13 @@ import {
 import {useToast} from 'react-native-toast-notifications';
 export const Timer = ({index}) => {
 
-  const [time, setTime] = useState(0);
-  const [isItActive, setIsItActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [inputValue, setInputValue] = useState(3);
+  const [time, setTime] = useState(0);  //this is time
+  const [isItActive, setIsItActive] = useState(false); //this refers if timer is running or not
+  const [isPaused, setIsPaused] = useState(false);  //pause value
+  const [inputValue, setInputValue] = useState(3);//this is input value
+  const [timeInterval,setTimeInterval]=useState(false) //this is for to know if the time has been started or not so that we can prevent pause button from starting interval
   const toast = useToast();
+
 
   // Function to handle the interval countdown
   const setIntervalFunction = intervalfun => {
@@ -30,6 +32,7 @@ export const Timer = ({index}) => {
     });
   };
 
+
   // Effect to handle starting, stopping, and clearing the timer
   const timerFunction = () => {
     let interval = null;
@@ -41,21 +44,34 @@ export const Timer = ({index}) => {
     return () => clearInterval(interval); // Clean up interval on component unmount
   };
 
+
   // Function to start the timer
   const startTimer = () => {
-    if (time > 0) setIsItActive(true);
+    if (isItActive) {
+        // If the timer is already active, show a notification
+        toast.show(`timer is already started in timer ${index}`, {
+          type: 'danger',
+        });
+        return
+      } else if (time > 0) {
+        // Start the timer if time is greater than 0
+         setIsItActive(true);
+      }
   };
+
 
   // Effect runs when isItActive or time changes
   useEffect(timerFunction, [isItActive, time]); 
 
+
   // Function to pause or resume the timer
   const pauseTimer = () => {
-    if (time == 0) {
+    if (time == 0 || !timeInterval) {  //either if timer is zero or timer is not startedYet, pause button should not work
       return;
     }
     setIsItActive(prev => !prev);
   };
+
 
   // Function to reset the timer
   const resetTimer = () => {
@@ -106,6 +122,7 @@ export const Timer = ({index}) => {
             styles.button,
             {backgroundColor: time == 0 ? 'grey' : 'blue'},
           ]}
+          disabled={time==0}
           onPress={startTimer}>
           <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>

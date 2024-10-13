@@ -1,57 +1,50 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {Timer} from './src/components/Timer';
+import {Notification} from './src/components/Notification';
+import {ToastProvider} from 'react-native-toast-notifications';
+import {AddtimerButton} from './src/components/AddtimerButton';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import { Timer } from './src/components/Timer';
-import { Notification } from './src/components/Notification';
-import { ToastProvider } from 'react-native-toast-notifications'
-const App= () => {
+const App = () => {
+  const [timer, setTimers] = useState([1]); //here i am storing timer count
 
+  //function responsible for creating timer
+  const addtoArray = toast => {
+    if (timer.length == 5) {
+      //this prevents user from creating more timers than 5
+      toast.show(`Maximum timer limit had been reached`, {
+        type: 'danger',
+      });
+      return;
+    }
+    const myarr = [...timer];
+    myarr.push(1); //increasing the timer count by pushing a number to array
+    setTimers(myarr);
+  };
 
   return (
     <ToastProvider
-    placement="top"
-    renderType={{
-      custom_type: Notification
-      
-    }}
-     >
-    <SafeAreaView >
-      <ScrollView>
-      {/* <Notification /> */}
-     <Timer index={1} notify={()=>{}} />
-     <Timer index={2} notify={()=>{}} />
-     <Timer index={3} notify={()=>{}} />
-     <Timer index={4} notify={()=>{}} />
-     <Timer index={5} notify={()=>{}} />
-     
-     </ScrollView>
-    </SafeAreaView>
+      placement="top"
+      renderType={{
+        custom_type: Notification,
+      }}>
+      <SafeAreaView>
+        <ScrollView style={styles.scrollviewStyle}>
+          {timer.map((ele, ind) => (
+            <Timer index={ind + 1} />
+          ))}
+          <AddtimerButton addtoArray={addtoArray} />
+        </ScrollView>
+      </SafeAreaView>
     </ToastProvider>
   );
 };
 
-
 export default App;
+
+const styles = StyleSheet.create({
+  scrollviewStyle: {
+    paddingBottom: 30,
+  },
+});
