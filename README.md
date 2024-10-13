@@ -23,3 +23,4 @@ The Timer App is a simple React Native application that allows users to create a
    ```bash
    git clone https://github.com/your-username/TimerApp.git
    cd TimerApp
+   npm i
