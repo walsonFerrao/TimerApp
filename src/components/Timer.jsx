@@ -8,30 +8,27 @@ import {
 } from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
 export const Timer = ({index}) => {
-
-  const [time, setTime] = useState(0);  //this is time
+  const [time, setTime] = useState(0); //this is time
   const [isItActive, setIsItActive] = useState(false); //this refers if timer is running or not
-  const [isPaused, setIsPaused] = useState(false);  //pause value
-  const [inputValue, setInputValue] = useState(3);//this is input value
-  const [timeInterval,setTimeInterval]=useState(false) //this is for to know if the time has been started or not so that we can prevent pause button from starting interval
+  const [isPaused, setIsPaused] = useState(false); //pause value
+  const [inputValue, setInputValue] = useState(3); //this is input value
+  const [timeInterval, setTimeInterval] = useState(false); //this is for to know if the time has been started or not so that we can prevent pause button from starting interval
   const toast = useToast();
-
 
   // Function to handle the interval countdown
   const setIntervalFunction = intervalfun => {
     setTime(prev => {
       if (prev <= 1) {
-         // Show a notification when time reaches zero
+        // Show a notification when time reaches zero
         toast.show(`Timer ${index} has been reached zero`, {
           type: 'custom_type',
         });
         clearInterval(intervalfun);
-        return 0;// Setting time to zero
+        return 0; // Setting time to zero
       }
       return prev - 1;
     });
   };
-
 
   // Effect to handle starting, stopping, and clearing the timer
   const timerFunction = () => {
@@ -44,34 +41,32 @@ export const Timer = ({index}) => {
     return () => clearInterval(interval); // Clean up interval on component unmount
   };
 
-
   // Function to start the timer
   const startTimer = () => {
     if (isItActive) {
-        // If the timer is already active, show a notification
-        toast.show(`timer is already started in timer ${index}`, {
-          type: 'danger',
-        });
-        return
-      } else if (time > 0) {
-        // Start the timer if time is greater than 0
-         setIsItActive(true);
-      }
+      // If the timer is already active, show a notification
+      toast.show(`timer is already started in timer ${index}`, {
+        type: 'danger',
+      });
+      return;
+    } else if (time > 0) {
+      // Start the timer if time is greater than 0
+      setIsItActive(true);
+      setTimeInterval(true);
+    }
   };
 
-
   // Effect runs when isItActive or time changes
-  useEffect(timerFunction, [isItActive, time]); 
-
+  useEffect(timerFunction, [isItActive, time]);
 
   // Function to pause or resume the timer
   const pauseTimer = () => {
-    if (time == 0 || !timeInterval) {  //either if timer is zero or timer is not startedYet, pause button should not work
+    if (time == 0 || !timeInterval) {
+      //either if timer is zero or timer is not startedYet, pause button should not work
       return;
     }
     setIsItActive(prev => !prev);
   };
-
 
   // Function to reset the timer
   const resetTimer = () => {
@@ -85,8 +80,13 @@ export const Timer = ({index}) => {
     setTime(inputValue);
     setIsItActive(false);
     setIsPaused(true);
+    setTimeInterval(false)
   };
 
+
+  const textInputCondition=()=>{
+   return isNaN(Number(inputValue)) || Number(inputValue) < 1
+  }
 
   return (
     <View style={styles.timerContainer}>
@@ -95,23 +95,29 @@ export const Timer = ({index}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          value={inputValue}
+          value={String(inputValue)}
+          defaultValue={3}
           keyboardType="numeric"
-          onChangeText={text => setInputValue(parseInt(text) || 0)}
+          onChangeText={text => setInputValue(text)}
           placeholder="Set Time "
           placeholderTextColor="#A9A9A9"
         />
         <TouchableOpacity
-          disabled={inputValue == 0}
+          disabled={textInputCondition()}
           style={[
             styles.button,
-            {backgroundColor: inputValue == 0 ? 'grey' : 'blue'},
+            {
+              backgroundColor:
+              textInputCondition()
+                  ? 'grey'
+                  : 'blue',
+            },
           ]}
           onPress={setInputTime}>
           <Text style={styles.buttonText}>AddTime</Text>
         </TouchableOpacity>
       </View>
-      {inputValue == 0 && (
+      {(textInputCondition()) && (
         <Text style={{color: 'red'}}>
           Input time should be more than 0 or a valid number
         </Text>
@@ -122,7 +128,7 @@ export const Timer = ({index}) => {
             styles.button,
             {backgroundColor: time == 0 ? 'grey' : 'blue'},
           ]}
-          disabled={time==0}
+          disabled={time == 0}
           onPress={startTimer}>
           <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>

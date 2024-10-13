@@ -32,7 +32,7 @@ const App = () => {
       <SafeAreaView>
         <ScrollView style={styles.scrollviewStyle}>
           {timer.map((ele, ind) => (
-            <Timer index={ind + 1} />
+            <Timer key={ind} index={ind + 1} />
           ))}
           <AddtimerButton addtoArray={addtoArray} />
         </ScrollView>
