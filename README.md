@@ -15,7 +15,7 @@ The Timer App is a simple React Native application that allows users to create a
 
 - **React Native**: The framework for building the mobile application.
 - **JavaScript**: The programming language used for development.
-- **react-native-push-notification**: Library for local notifications.
+- **react-native-toast-notifications**: Library for local notifications.
 
 ## Installation
 
